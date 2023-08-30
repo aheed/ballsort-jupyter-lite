@@ -25,7 +25,7 @@ jobs:
         run: |
           cp README.md content
           jupyter lite build --contents content --output-dir dist
-          cp custom_icon.ico dist/lab
+          cp custom_icon.ico dist/lab/favicon.ico
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
