@@ -23,7 +23,6 @@ jobs:
           python -m pip install -r requirements.txt
       - name: Build the JupyterLite site
         run: |
-          cp README.md content
           jupyter lite build --contents content --output-dir dist
           cp custom_icon.ico dist/lab/favicon.ico
           sed -i 's/<title>JupyterLite<\/title>/<title>Ball Sort Lab<\/title>/g' dist/lab/index.html
