@@ -3,15 +3,11 @@ from dataclasses import replace
 
 from ball_control import BallControl, IllegalBallControlStateError
 from scenario_control import ScenarioControl
-from state_update_model import StateBall, StatePosition, StateUpdateModel, get_default_state
+from state_update_model import StateBall, StatePosition, StateUpdateModel, get_default_state, MIN_X, MAX_X, MIN_Y, MAX_Y
 from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
 
-    MIN_X = 0
-    MIN_Y = 0
-    MAX_X = 3
-    MAX_Y = 4
     delay_mult = 1.0
     state = get_default_state()
     moving_horizontally = False
@@ -39,7 +35,7 @@ class BallControlSim(BallControl, ScenarioControl):
         await self.update_reporter.send_update(state_update)
 
     def __set_position(self, x: int, y: int = 0):
-        if (x < self.MIN_X or y < self.MIN_Y or x > self.MAX_X or y > self.MAX_Y):
+        if (x < MIN_X or y < MIN_Y or x > MAX_X or y > MAX_Y):
             raise Exception("coordinates out of bounds")
         self.state = replace(self.state, claw=replace(self.state.claw, pos=StatePosition(x = x, y = y)))
         print(f"new position: {x}, {y}")
@@ -96,7 +92,6 @@ class BallControlSim(BallControl, ScenarioControl):
             raise IllegalBallControlStateError("Claw already opening or closing")
         self.operating_claw = True
         try:
-            self.claw_open = open
             delayTask = asyncio.create_task(self.__delay(0.3))
             
             self.state = replace(self.state, claw=replace(self.state.claw, open=open))
