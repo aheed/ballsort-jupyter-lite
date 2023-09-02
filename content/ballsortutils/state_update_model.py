@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+MIN_X = 0
+MIN_Y = 0
+MAX_X = 3
+MAX_Y = 4
 
 @dataclass
 class StatePosition:
@@ -17,6 +21,7 @@ class StateBall:
 class Claw:
     pos: StatePosition
     open: bool
+    ball_color: str
 
 
 @dataclass
@@ -38,5 +43,5 @@ def get_default_state() -> StateModel:
         nofRows=4,
         nofCols=5,
         balls=[StateBall(pos=StatePosition(x=3, y=4), color="blue")],
-        claw=Claw(pos=StatePosition(x=0, y=0), open=True),
+        claw=Claw(pos=StatePosition(x=0, y=0), open=True, ball_color=""),
     )
