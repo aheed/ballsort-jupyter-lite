@@ -1,4 +1,5 @@
 from state_update_model import (
+    StateBall,
     StateModel,
     MAX_Y,
 )
@@ -16,6 +17,11 @@ def is_ball_at_current_pos(state: StateModel) -> bool:
     # balls_at_current_pos = filter(lambda ball: ball.pos == self.state.claw.pos, self.state.balls)
     # return any(balls_at_current_pos)
 
+def get_ball_at_current_pos(state: StateModel) -> StateBall | None:
+    return next(
+        (ball for ball in state.balls if ball.pos == state.claw.pos),
+        None,
+    )
 
 def get_top_occupied_index(state: StateModel) -> int:
     y_indexes_in_current_column = [

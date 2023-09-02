@@ -1,6 +1,8 @@
 from dataclasses import dataclass, replace
+from state_utils import get_ball_at_current_pos, is_ball_in_claw
 from state_validator import StateValidator
 from state_update_model import (
+    StateBall,
     StateModel,
     StatePosition,
 )
@@ -31,10 +33,23 @@ class StateManager:
 
     def open_claw(self):
         self.validator.open_claw()
-        self.state = replace(self.state, claw=replace(self.state.claw, open=True))
+        #self.state = replace(self.state, claw=replace(self.state.claw, open=True))
+        self.state.claw.open = True
         #todo: update ball-in-claw color and balls collection
+        if not is_ball_in_claw(self.state):
+            return
+        self.state.claw.ball_color = ""
+        newBall = StateBall(pos=self.state.claw.pos, color=self.state.claw.ball_color)
+        self.state.balls.append(newBall)
 
     def close_claw(self):
         self.validator.close_claw()
-        self.state = replace(self.state, claw=replace(self.state.claw, open=False))
+        #self.state = replace(self.state, claw=replace(self.state.claw, open=False))
+        self.state.claw.open = False
         #todo: update ball-in-claw color and balls collection
+        ball_to_grab = get_ball_at_current_pos(self.state)
+        if not ball_to_grab:
+            return
+        #remove ball from list
+        self.state.balls = [ball for ball in self.state.balls if ball.pos != ball_to_grab.pos]
+        #self.state.balls = filter(lambda ball: ball.pos != ball_to_grab.pos, self.state.balls)
