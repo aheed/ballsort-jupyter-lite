@@ -19,11 +19,10 @@ from state_update_model import (
 class StateValidator:
     """Validates operations"""
 
-    state: StateModel
-
-    def move_relative(self, x: int, y: int):
-        newX = self.state.claw.pos.x + x
-        newY = self.state.claw.pos.y + y
+    def move_relative(self, state: StateModel, x: int, y: int):
+        #print("state: ", state)
+        newX = state.claw.pos.x + x
+        newY = state.claw.pos.y + y
         if newX < MIN_X or newY < MIN_Y or newX > MAX_X or newY > MAX_Y:
             raise IllegalBallControlStateError("coordinates out of bounds")
 
@@ -33,20 +32,22 @@ class StateValidator:
     #    def move_vertically(self, distance: int) -> None:
     #        self.move_relative(x=0, y=distance)
 
-    def open_claw(self):
-        if not is_ball_in_claw(self.state):
+    def open_claw(self, state: StateModel):
+        #print("state: ", state)
+        if not is_ball_in_claw(state):
             return
 
-        if self.state.claw.pos.y != get_top_occupied_index(self.state):
+        if state.claw.pos.y != get_top_vacant_index(state):
             raise IllegalBallControlStateError(
-                "Illegal drop location. Must be topmost vacant position."
+                f"Illegal drop location. Must be topmost vacant position ({get_top_vacant_index(state)}). Y={state.claw.pos.y}."
             )
 
-    def close_claw(self):
-        if not is_ball_at_current_pos(self.state):
+    def close_claw(self, state: StateModel):
+        #print("state: ", state)
+        if not is_ball_at_current_pos(state):
             return
 
-        if self.state.claw.pos.y != get_top_vacant_index(self.state):
+        if state.claw.pos.y != get_top_occupied_index(state):
             raise IllegalBallControlStateError(
-                "Illegal grab. Must be topmost marble position."
+                f"Illegal grab. Must be topmost marble position ({get_top_occupied_index(state)}).\ Y={state.claw.pos.y}."
             )

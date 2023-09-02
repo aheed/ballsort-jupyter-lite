@@ -28,7 +28,7 @@ def get_top_occupied_index(state: StateModel) -> int:
         ball.pos.y for ball in state.balls if ball.pos.x == state.claw.pos.x
     ]
     top_occupied_y_index = (
-        max(y_indexes_in_current_column) if y_indexes_in_current_column else MAX_Y
+        min(y_indexes_in_current_column) if y_indexes_in_current_column else MAX_Y + 1
     )
     return top_occupied_y_index
 

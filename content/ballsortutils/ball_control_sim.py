@@ -4,13 +4,12 @@ from dataclasses import replace
 from ball_control import BallControl, IllegalBallControlStateError
 from state_manager import StateManager
 from scenario_control import ScenarioControl
-from state_update_model import StateBall, StatePosition, StateUpdateModel, get_default_state, MIN_X, MAX_X, MIN_Y, MAX_Y
+from state_update_model import StateBall, StateUpdateModel, get_default_state
 from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
 
     delay_mult = 1.0
-    state = get_default_state()
     moving_horizontally = False
     moving_vertically = False
     operating_claw = False
@@ -19,7 +18,7 @@ class BallControlSim(BallControl, ScenarioControl):
 
     def __init__(self, update_reporter: UpdateReporter):
         self.update_reporter = update_reporter
-        self.state_manager = StateManager(self.state)
+        self.state_manager = StateManager(get_default_state())
 
     async def __aenter__(self):
         pass
@@ -28,7 +27,7 @@ class BallControlSim(BallControl, ScenarioControl):
         await self.update_reporter.shutdown()
 
     async def __send_update(self, include_balls: bool = False):
-        state_to_send = self.state if (include_balls) else replace(self.state, balls = None)
+        state_to_send = self.state_manager.state if (include_balls) else replace(self.state_manager.state, balls = None)
 
         state_update: StateUpdateModel = StateUpdateModel(
                 userId="glen",
@@ -80,7 +79,7 @@ class BallControlSim(BallControl, ScenarioControl):
         asyncio.run(self.move_relative(x, y))
 
     def get_position(self) -> tuple[int, int]:
-        return self.state.claw.pos.x, self.state.claw.pos.y
+        return self.state_manager.state.claw.pos.x, self.state_manager.state.claw.pos.y
 
     async def __operate_claw(self, open: bool):
         if (self.operating_claw):
@@ -102,6 +101,5 @@ class BallControlSim(BallControl, ScenarioControl):
         await self.__operate_claw(False)
 
     async def set_scenario(self, balls: list[StateBall]):
-        self.state = get_default_state()
-        self.state = replace(self.state, balls = balls)
+        self.state_manager.state = replace(get_default_state(), balls = balls)
         await self.__send_update(include_balls = True)

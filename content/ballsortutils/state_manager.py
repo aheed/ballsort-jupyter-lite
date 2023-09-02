@@ -17,10 +17,10 @@ class StateManager:
 
     def __init__(self, state: StateModel):
         self.state = state
-        self.validator = StateValidator(state)
+        self.validator = StateValidator()
 
     def move_relative(self, x: int, y: int):
-        self.validator.move_relative(x, y)
+        self.validator.move_relative(self.state, x, y)
         newX = self.state.claw.pos.x + x
         newY = self.state.claw.pos.y + y
         self.state = replace(self.state, claw=replace(self.state.claw, pos=StatePosition(x = newX, y = newY)))
@@ -33,7 +33,7 @@ class StateManager:
         self.move_relative(x=0, y=distance)
 
     def open_claw(self):
-        self.validator.open_claw()
+        self.validator.open_claw(self.state)
         #self.state = replace(self.state, claw=replace(self.state.claw, open=True))
         self.state.claw.open = True
         #todo: update ball-in-claw color and balls collection
@@ -46,7 +46,7 @@ class StateManager:
         self.state.balls.append(newBall)
 
     def close_claw(self):
-        self.validator.close_claw()
+        self.validator.close_claw(self.state)
         #self.state = replace(self.state, claw=replace(self.state.claw, open=False))
         self.state.claw.open = False
         print(f"closing claw")
