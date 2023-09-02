@@ -49,5 +49,5 @@ class StateValidator:
 
         if state.claw.pos.y != get_top_occupied_index(state):
             raise IllegalBallControlStateError(
-                f"Illegal grab. Must be topmost marble position ({get_top_occupied_index(state)}).\ Y={state.claw.pos.y}."
+                f"Illegal grab. Must be topmost marble position ({get_top_occupied_index(state)}). Y={state.claw.pos.y}."
             )
