@@ -2,6 +2,7 @@ import asyncio
 from dataclasses import replace
 
 from ball_control import BallControl, IllegalBallControlStateError
+from state_manager import StateManager
 from scenario_control import ScenarioControl
 from state_update_model import StateBall, StatePosition, StateUpdateModel, get_default_state, MIN_X, MAX_X, MIN_Y, MAX_Y
 from update_reporter import UpdateReporter
@@ -14,9 +15,11 @@ class BallControlSim(BallControl, ScenarioControl):
     moving_vertically = False
     operating_claw = False
     update_reporter: UpdateReporter
+    state_manager: StateManager
 
     def __init__(self, update_reporter: UpdateReporter):
         self.update_reporter = update_reporter
+        self.state_manager = StateManager(self.state)
 
     async def __aenter__(self):
         pass
@@ -33,21 +36,13 @@ class BallControlSim(BallControl, ScenarioControl):
             )
 
         await self.update_reporter.send_update(state_update)
-
-    def __set_position(self, x: int, y: int = 0):
-        if (x < MIN_X or y < MIN_Y or x > MAX_X or y > MAX_Y):
-            raise Exception("coordinates out of bounds")
-        self.state = replace(self.state, claw=replace(self.state.claw, pos=StatePosition(x = x, y = y)))
-        print(f"new position: {x}, {y}")
-    
+   
     async def __delay(self, duration: float):
         await asyncio.sleep(duration * self.delay_mult)
 
     async def move_relative(self, x: int, y: int = 0, delay: float = 1.0):
-        
-        newX = self.state.claw.pos.x + x
-        newY = self.state.claw.pos.y + y
-        self.__set_position(newX, newY)
+        self.state_manager.move_relative(x, y)
+
         delayTask = asyncio.create_task(self.__delay(delay))
 
         await self.__send_update()
@@ -93,9 +88,7 @@ class BallControlSim(BallControl, ScenarioControl):
         self.operating_claw = True
         try:
             delayTask = asyncio.create_task(self.__delay(0.3))
-            
-            self.state = replace(self.state, claw=replace(self.state.claw, open=open))
-            print(f"new claw open state: {open}")
+            self.state_manager.open_claw() if open else self.state_manager.close_claw()
 
             await self.__send_update()
             await delayTask
