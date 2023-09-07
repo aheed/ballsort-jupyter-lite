@@ -42,6 +42,6 @@ def get_default_state() -> StateModel:
     return StateModel(
         nofRows=4,
         nofCols=5,
-        balls=[StateBall(pos=StatePosition(x=3, y=4), color="blue")],
+        balls=[StateBall(pos=StatePosition(x=2, y=4), color="blue")],
         claw=Claw(pos=StatePosition(x=0, y=0), open=True, ball_color=""),
     )
