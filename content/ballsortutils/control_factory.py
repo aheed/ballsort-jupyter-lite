@@ -5,11 +5,11 @@ from ball_control_sim import BallControlSim
 from postmessage_update_reporter import PostMessageUpdateReporter
 #from dummy_ur import DummyUpdateReporter
 
-def get_control_sim() -> BallControlSim:
+def get_control_sim(delay_multiplier: float = 1.0) -> BallControlSim:
     #reporter = V1UpdateReporter()
     #reporter = AblyUpdateReporter()
     #reporter = AblyRestUpdateReporter()
     reporter = PostMessageUpdateReporter()
     #reporter = DummyUpdateReporter()
     
-    return BallControlSim(reporter)
+    return BallControlSim(update_reporter=reporter, delay_multiplier=delay_multiplier)

@@ -2,23 +2,25 @@ import asyncio
 from dataclasses import replace
 
 from ball_control import BallControl, IllegalBallControlStateError
+from scenario import Scenario
 from state_manager import StateManager
 from scenario_control import ScenarioControl
-from state_update_model import StateBall, StateUpdateModel, get_default_state
+from state_update_model import StateUpdateModel, get_default_state
 from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
 
-    delay_mult = 1.0
+    delay_mult: float
     moving_horizontally = False
     moving_vertically = False
     operating_claw = False
     update_reporter: UpdateReporter
     state_manager: StateManager
 
-    def __init__(self, update_reporter: UpdateReporter):
+    def __init__(self, update_reporter: UpdateReporter, delay_multiplier: float = 1.0):
         self.update_reporter = update_reporter
         self.state_manager = StateManager(get_default_state())
+        self.delay_mult = delay_multiplier
 
     async def __aenter__(self):
         pass
@@ -100,6 +102,6 @@ class BallControlSim(BallControl, ScenarioControl):
     async def close_claw(self):
         await self.__operate_claw(False)
 
-    async def set_scenario(self, balls: list[StateBall]):
-        self.state_manager.state = replace(get_default_state(), balls = balls)
+    async def set_scenario(self, scenario: Scenario):
+        self.state_manager.set_scenario(scenario)
         await self.__send_update(include_balls = True)
