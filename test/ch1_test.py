@@ -5,7 +5,6 @@ import sys
 sys.path.append("../content/ballsortutils")
 
 from control_factory import get_control_sim
-from scenarios import set_challenge1_scenario
 from ch1_scenario import Ch1Scenario
 from state_update_model import StateBall, StatePosition, get_default_state
 
@@ -39,7 +38,8 @@ def test_goal_state():
 async def example_solution():
     bc = get_control_sim(0)
     async with bc:
-        await set_challenge1_scenario(bc)
+        #await set_challenge1_scenario(bc)
+        await bc.set_scenario(Ch1Scenario())
 
         # pink marble
         t2 = asyncio.create_task(bc.move_vertically(2))

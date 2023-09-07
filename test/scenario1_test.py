@@ -3,12 +3,12 @@ sys.path.append("../content/ballsortutils")
 
 import asyncio
 from control_factory import get_control_sim
-from scenarios import set_scenario1
+from ch0_scenario import Ch0Scenario
 
 async def sequence_concurrent():
     bc = get_control_sim(0)
     async with bc:
-        await set_scenario1(bc)
+        await bc.set_scenario(Ch0Scenario())
 
         # green marble
         t1 = asyncio.create_task(bc.move_horizontally(1))
@@ -16,7 +16,7 @@ async def sequence_concurrent():
         await t1
         await t2    
         await bc.close_claw()
-        await bc.move_horizontally(-1)    
+        await bc.move_horizontally(-1)
         await bc.open_claw()
         
         # blue marble
