@@ -41,8 +41,8 @@ class StateManager:
         if not is_ball_in_claw(self.state):
             return
         print(f"dropping {self.state.claw.ball_color} marble")
-        self.state.claw.ball_color = ""
         newBall = StateBall(pos=self.state.claw.pos, color=self.state.claw.ball_color)
+        self.state.claw.ball_color = ""
         self.state.balls.append(newBall)
 
     def close_claw(self):
