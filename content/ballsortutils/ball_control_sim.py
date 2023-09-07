@@ -9,16 +9,17 @@ from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
 
-    delay_mult = 1.0
+    delay_mult: float
     moving_horizontally = False
     moving_vertically = False
     operating_claw = False
     update_reporter: UpdateReporter
     state_manager: StateManager
 
-    def __init__(self, update_reporter: UpdateReporter):
+    def __init__(self, update_reporter: UpdateReporter, delay_multiplier: float = 1.0):
         self.update_reporter = update_reporter
         self.state_manager = StateManager(get_default_state())
+        self.delay_mult = delay_multiplier
 
     async def __aenter__(self):
         pass
