@@ -1,4 +1,5 @@
 from dataclasses import dataclass, replace
+from scenario import Scenario
 from state_utils import get_ball_at_current_pos, is_ball_in_claw
 from state_validator import StateValidator
 from state_update_model import (
@@ -14,10 +15,25 @@ class StateManager:
 
     state: StateModel
     validator: StateValidator
+    scenario: Scenario | None
 
-    def __init__(self, state: StateModel):
+    def __init__(self, state: StateModel, scenario : Scenario | None = None):
         self.state = state
         self.validator = StateValidator()
+        self.scenario = scenario
+
+    def _check_goal_state(self):
+        if self.scenario is None:
+            return
+        isInGoalState = self.scenario.is_in_goal_state(self.state)
+        if (isInGoalState and not self.state.isInGoalState):
+            print("Goal accomplished! 😁")
+        self.state.isInGoalState = isInGoalState
+
+    def set_scenario(self, scenario: Scenario):
+        self.scenario = scenario
+        self.state = scenario.get_initial_state()
+        print(f"Goal:\n{scenario.get_goal_state_description()}")
 
     def move_relative(self, x: int, y: int):
         self.validator.move_relative(self.state, x, y)
@@ -34,9 +50,7 @@ class StateManager:
 
     def open_claw(self):
         self.validator.open_claw(self.state)
-        #self.state = replace(self.state, claw=replace(self.state.claw, open=True))
         self.state.claw.open = True
-        #todo: update ball-in-claw color and balls collection
         print(f"opening claw")
         if not is_ball_in_claw(self.state):
             return
@@ -44,13 +58,12 @@ class StateManager:
         newBall = StateBall(pos=self.state.claw.pos, color=self.state.claw.ball_color)
         self.state.claw.ball_color = ""
         self.state.balls.append(newBall)
+        self._check_goal_state()
 
     def close_claw(self):
         self.validator.close_claw(self.state)
-        #self.state = replace(self.state, claw=replace(self.state.claw, open=False))
         self.state.claw.open = False
         print(f"closing claw")
-        #todo: update ball-in-claw color and balls collection
         ball_to_grab = get_ball_at_current_pos(self.state)
         if not ball_to_grab:
             return
@@ -58,4 +71,4 @@ class StateManager:
         self.state.claw.ball_color = ball_to_grab.color
         #remove ball from list
         self.state.balls = [ball for ball in self.state.balls if ball.pos != ball_to_grab.pos]
-        #self.state.balls = filter(lambda ball: ball.pos != ball_to_grab.pos, self.state.balls)
+        self._check_goal_state()
