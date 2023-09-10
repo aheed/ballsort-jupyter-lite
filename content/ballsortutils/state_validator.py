@@ -35,13 +35,19 @@ class StateValidator:
         if newY < MIN_Y or newY > MAX_Y:
             raise IllegalBallControlStateError(f"Y coordinate out of bounds y={newY} minY={MIN_Y} maxY={MAX_Y}")
 
+    def _check_claw_for_ongoing_operations(self, state: StateModel):
+        if (state.operating_claw):
+            raise IllegalBallControlStateError("Claw already opening or closing")
+        
+        if (state.moving_horizontally or state.moving_vertically):
+            raise IllegalBallControlStateError("Ball dropped while claw is in motion")
+
     def open_claw(self, state: StateModel):
         #print("state: ", state)
         if not is_ball_in_claw(state):
             return
         
-        if (state.operating_claw):
-            raise IllegalBallControlStateError("Claw already opening or closing")
+        self._check_claw_for_ongoing_operations(state=state)
 
         if state.claw.pos.y != get_top_vacant_index(state):
             raise IllegalBallControlStateError(
@@ -53,8 +59,7 @@ class StateValidator:
         if not is_ball_at_current_pos(state):
             return
         
-        if (state.operating_claw):
-            raise IllegalBallControlStateError("Claw already opening or closing")
+        self._check_claw_for_ongoing_operations(state=state)
 
         if state.claw.pos.y != get_top_occupied_index(state):
             raise IllegalBallControlStateError(
