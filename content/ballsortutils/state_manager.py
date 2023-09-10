@@ -36,16 +36,17 @@ class StateManager:
         print(f"Goal:\n{scenario.get_goal_state_description()}")
 
     def move_relative(self, x: int, y: int):
-        self.validator.move_relative(self.state, x, y)
         newX = self.state.claw.pos.x + x
         newY = self.state.claw.pos.y + y
         self.state = replace(self.state, claw=replace(self.state.claw, pos=StatePosition(x = newX, y = newY)))
         print(f"new position: {newX}, {newY}")
 
     def move_horizontally(self, distance: int):
+        self.validator.move_horizontally(state=self.state, distance=distance)
         self.move_relative(x=distance, y=0)
 
     def move_vertically(self, distance: int) -> None:
+        self.validator.move_vertically(state=self.state, distance=distance)
         self.move_relative(x=0, y=distance)
 
     def open_claw(self):
