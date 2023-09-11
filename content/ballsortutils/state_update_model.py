@@ -31,6 +31,9 @@ class StateModel:
     balls: list[StateBall]
     claw: Claw
     isInGoalState: bool
+    moving_horizontally: bool
+    moving_vertically: bool
+    operating_claw: bool
 
 
 @dataclass
@@ -45,5 +48,8 @@ def get_default_state() -> StateModel:
         nofCols=5,
         balls=[StateBall(pos=StatePosition(x=2, y=4), color="blue")],
         claw=Claw(pos=StatePosition(x=0, y=0), open=True, ball_color=""),
-        isInGoalState=False
+        isInGoalState=False,
+        moving_horizontally=False,
+        moving_vertically=False,
+        operating_claw=False
     )
