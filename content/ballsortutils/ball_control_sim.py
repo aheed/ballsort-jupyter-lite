@@ -5,7 +5,7 @@ from ball_control import BallControl
 from scenario import Scenario
 from state_manager import StateManager
 from scenario_control import ScenarioControl
-from state_update_model import StateModel, StateUpdateModel, get_default_state
+from state_update_model import StateModel, StatePosition, StateUpdateModel, get_default_state
 from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
@@ -67,8 +67,8 @@ class BallControlSim(BallControl, ScenarioControl):
             self.state = self.state_manager.move_vertically_end(state=self.state)
             await self.__send_update()
 
-    def get_position(self) -> tuple[int, int]:
-        return self.state.claw.pos.x, self.state.claw.pos.y
+    def get_position(self) -> StatePosition:
+        return self.state.claw.pos
 
     async def open_claw(self):
         try:
