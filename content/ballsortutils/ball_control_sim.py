@@ -5,7 +5,7 @@ from ball_control import BallControl
 from scenario import Scenario
 from state_manager import StateManager
 from scenario_control import ScenarioControl
-from state_update_model import StateUpdateModel, get_default_state
+from state_update_model import StateModel, StateUpdateModel, get_default_state
 from update_reporter import UpdateReporter
 
 class BallControlSim(BallControl, ScenarioControl):
@@ -13,11 +13,13 @@ class BallControlSim(BallControl, ScenarioControl):
     delay_mult: float
     update_reporter: UpdateReporter
     state_manager: StateManager
+    state: StateModel
 
     def __init__(self, update_reporter: UpdateReporter, delay_multiplier: float = 1.0):
         self.update_reporter = update_reporter
-        self.state_manager = StateManager(get_default_state())
+        self.state_manager = StateManager()
         self.delay_mult = delay_multiplier
+        self.state = get_default_state()
 
     async def __aenter__(self):
         pass
@@ -26,7 +28,7 @@ class BallControlSim(BallControl, ScenarioControl):
         await self.update_reporter.shutdown()
 
     async def __send_update(self, include_balls: bool = False):
-        state_to_send = self.state_manager.state if (include_balls) else replace(self.state_manager.state, balls = None)
+        state_to_send = self.state if (include_balls) else replace(self.state, balls = None)
 
         state_update: StateUpdateModel = StateUpdateModel(
                 userId="glen",
@@ -48,10 +50,10 @@ class BallControlSim(BallControl, ScenarioControl):
             return
         
         try:
-            self.state_manager.move_horizontally_start(distance=distance)
+            self.state = self.state_manager.move_horizontally_start(state=self.state, distance=distance)
             await self._move_relative(x=distance, y=0, delay=1.0)            
         finally:
-            self.state_manager.move_horizontally_end()
+            self.state = self.state_manager.move_horizontally_end(state=self.state)
             await self.__send_update()
 
     async def move_vertically(self, distance: int) -> None:
@@ -59,35 +61,35 @@ class BallControlSim(BallControl, ScenarioControl):
             return
         
         try:
-            self.state_manager.move_vertically_start(distance=distance)
+            self.state = self.state_manager.move_vertically_start(state=self.state, distance=distance)
             await self._move_relative(x=0, y=distance, delay=1.5)
         finally:
-            self.state_manager.move_vertically_end()
+            self.state = self.state_manager.move_vertically_end(state=self.state)
             await self.__send_update()
 
     def get_position(self) -> tuple[int, int]:
-        return self.state_manager.state.claw.pos.x, self.state_manager.state.claw.pos.y
+        return self.state.claw.pos.x, self.state.claw.pos.y
 
     async def open_claw(self):
         try:
             delayTask = asyncio.create_task(self.__delay(0.3))
-            self.state_manager.open_claw_start()
+            self.state = self.state_manager.open_claw_start(state=self.state)
 
             await self.__send_update()
             await delayTask
         finally:
-            self.state_manager.open_claw_end()
+            self.state = self.state_manager.open_claw_end(state=self.state)
 
     async def close_claw(self):
         try:
             delayTask = asyncio.create_task(self.__delay(0.3))
-            self.state_manager.close_claw_start()
+            self.state = self.state_manager.close_claw_start(state=self.state)
 
             await self.__send_update()
             await delayTask
         finally:
-            self.state_manager.close_claw_end()
+            self.state = self.state_manager.close_claw_end(state=self.state)
 
     async def set_scenario(self, scenario: Scenario):
-        self.state_manager.set_scenario(scenario)
+        self.state = self.state_manager.set_scenario(state=self.state, scenario=scenario)
         await self.__send_update(include_balls = True)
