@@ -1,11 +1,22 @@
+from dataclasses import dataclass
+from typing import Any
 from state_update_model import StateModel
 
+@dataclass
+class ScenarioProgress(object):
+    """Represents how many are completed out of a total number of steps."""
+    completed: int
+    total: int
 
 class Scenario(object):
     """Interface for a specific scenario"""
 
     def get_initial_state(self) -> StateModel:
         """Returns the initial state for the scenario."""
+        raise NotImplementedError
+    
+    def get_progress(self, state: StateModel) -> ScenarioProgress:
+        """Returns progress toward goal state."""
         raise NotImplementedError
 
     def is_in_goal_state(self, state: StateModel) -> bool:
