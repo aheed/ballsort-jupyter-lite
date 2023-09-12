@@ -2,6 +2,7 @@ from state_update_model import (
     StateBall,
     StateModel,
     MAX_Y,
+    StatePosition,
 )
 
 
@@ -16,6 +17,12 @@ def is_ball_at_current_pos(state: StateModel) -> bool:
     )
     # balls_at_current_pos = filter(lambda ball: ball.pos == self.state.claw.pos, self.state.balls)
     # return any(balls_at_current_pos)
+
+def get_ball_at(state: StateModel, pos: StatePosition) -> StateBall | None:
+    return next(
+        (ball for ball in state.balls if pos == ball.pos),
+        None,
+    )
 
 def get_ball_at_current_pos(state: StateModel) -> StateBall | None:
     return next(

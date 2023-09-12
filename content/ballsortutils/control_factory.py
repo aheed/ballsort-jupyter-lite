@@ -15,6 +15,6 @@ def get_control_sim(delay_multiplier: float = 1.0) -> BallControlSim:
     
     return BallControlSim(update_reporter=reporter, delay_multiplier=delay_multiplier)
 
-def get_ch2_control_sim(delay_multiplier: float = 1.0) -> BallControlSim:
+def get_ch2_control_sim(delay_multiplier: float = 1.0) -> BallControlCh2:
     reporter = PostMessageUpdateReporter()
     return BallControlCh2(update_reporter=reporter, delay_multiplier=delay_multiplier)

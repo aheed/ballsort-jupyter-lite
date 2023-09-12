@@ -37,11 +37,11 @@ class BallControlSim(BallControl, ScenarioControl):
 
         await self.update_reporter.send_update(state_update)
    
-    async def __delay(self, duration: float):
+    async def _delay(self, duration: float):
         await asyncio.sleep(duration * self.delay_mult)
 
     async def _move_relative(self, x: int, y: int, delay: float = 1.0):
-        delayTask = asyncio.create_task(self.__delay(delay))
+        delayTask = asyncio.create_task(self._delay(delay))
         await self.__send_update()
         await delayTask
 
@@ -72,7 +72,7 @@ class BallControlSim(BallControl, ScenarioControl):
 
     async def open_claw(self):
         try:
-            delayTask = asyncio.create_task(self.__delay(0.3))
+            delayTask = asyncio.create_task(self._delay(0.3))
             self.state = self.state_manager.open_claw_start(state=self.state)
 
             await self.__send_update()
@@ -82,7 +82,7 @@ class BallControlSim(BallControl, ScenarioControl):
 
     async def close_claw(self):
         try:
-            delayTask = asyncio.create_task(self.__delay(0.3))
+            delayTask = asyncio.create_task(self._delay(0.3))
             self.state = self.state_manager.close_claw_start(state=self.state)
 
             await self.__send_update()
