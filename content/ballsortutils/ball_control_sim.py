@@ -2,7 +2,7 @@ import asyncio
 from dataclasses import replace
 
 from ball_control import BallControl
-from scenario import Scenario
+from scenario import Scenario, ScenarioProgress
 from state_manager import StateManager
 from scenario_control import ScenarioControl
 from state_update_model import StateModel, StatePosition, StateUpdateModel, get_default_state
@@ -93,3 +93,14 @@ class BallControlSim(BallControl, ScenarioControl):
     async def set_scenario(self, scenario: Scenario):
         self.state = self.state_manager.set_scenario(state=self.state, scenario=scenario)
         await self.__send_update(include_balls = True)
+
+    def get_progress(self) -> ScenarioProgress:
+        if not self.state_manager.scenario:
+            return ScenarioProgress(completed=0, total=0)
+        return self.state_manager.scenario.get_progress(self.state)
+
+    def is_in_goal_state(self) -> bool:
+        if not self.state_manager.scenario:
+            return False
+        return self.state_manager.scenario.is_in_goal_state(self.state)
+    

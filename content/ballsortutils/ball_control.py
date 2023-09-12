@@ -1,3 +1,4 @@
+from scenario import ScenarioProgress
 from state_update_model import StatePosition
 
 
@@ -29,4 +30,12 @@ class BallControl(object):
         pass
 
     def get_position(self) -> StatePosition:
+        raise NotImplementedError
+    
+    def get_progress(self) -> ScenarioProgress:
+        """Returns progress toward goal state."""
+        raise NotImplementedError
+
+    def is_in_goal_state(self) -> bool:
+        """Returns true only if state fulfills the goal state criteria."""
         raise NotImplementedError
