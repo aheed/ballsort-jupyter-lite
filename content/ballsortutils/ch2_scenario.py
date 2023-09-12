@@ -1,7 +1,6 @@
 from dataclasses import dataclass, replace
 from scenario import Scenario
 from state_update_model import (
-    MAX_Y,
     MIN_X,
     StateBall,
     StateModel,
@@ -32,15 +31,15 @@ class Ch2Scenario(Scenario):
             return False
         
         # yellow at bottom
-        if not next((True for y_ball in state.balls if y_ball.color == "yellow" and y_ball.pos.x == MIN_X and y_ball.pos.y == MAX_Y), False):
+        if not next((True for y_ball in state.balls if y_ball.color == "yellow" and y_ball.pos.x == MIN_X and y_ball.pos.y == state.max_y), False):
             return False
 
         # green in the middle
-        if not next((True for g_ball in state.balls if g_ball.color == "green" and g_ball.pos.x == MIN_X and g_ball.pos.y == MAX_Y-1), False):
+        if not next((True for g_ball in state.balls if g_ball.color == "green" and g_ball.pos.x == MIN_X and g_ball.pos.y == state.max_y-1), False):
             return False
         
         # blue on top
-        if not next((True for b_ball in state.balls if b_ball.color == "blue" and b_ball.pos.x == MIN_X and b_ball.pos.y == MAX_Y-2), False):
+        if not next((True for b_ball in state.balls if b_ball.color == "blue" and b_ball.pos.x == MIN_X and b_ball.pos.y == state.max_y-2), False):
             return False
         
         return True
