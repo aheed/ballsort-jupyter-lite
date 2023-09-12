@@ -1,13 +1,12 @@
 import asyncio
 from dataclasses import replace
 import sys
-
 sys.path.append("../content/ballsortutils")
 
 from control_factory import get_ch2_control_sim
-from ball_control import BallControl
 from ch2_scenario import Ch2Scenario
 from state_update_model import StateBall, StatePosition, get_default_state
+from test_utils import move_ball
 
 
 def test_goal_state():
@@ -33,22 +32,6 @@ def test_goal_state():
     state = replace(get_default_state(), balls=balls)
     assert sc.is_in_goal_state(state) == True
 
-async def move_ball(bc: BallControl, src: StatePosition, dest: StatePosition):    
-    rel_x = src.x - bc.get_position().x
-    rel_y = src.y - bc.get_position().y
-    await asyncio.gather(
-        bc.move_horizontally(rel_x),
-        bc.move_vertically(rel_y),
-        bc.open_claw())
-    await bc.close_claw()
-    
-    rel_x = dest.x - bc.get_position().x
-    rel_y = dest.y - bc.get_position().y
-    await asyncio.gather(
-        bc.move_horizontally(rel_x),
-        bc.move_vertically(rel_y))
-    await bc.open_claw()
-
 async def example_solution_no_scales():
     bc = get_ch2_control_sim(delay_multiplier=0.0)
     async with bc:
@@ -66,7 +49,8 @@ async def example_solution_no_scales():
 async def example_solution():
     bc = get_ch2_control_sim(delay_multiplier=0.0)
     async with bc:
-        await bc.set_scenario(Ch2Scenario())
+        sc = Ch2Scenario()
+        await bc.set_scenario(sc)
 
         # yellow marble to left scale
         await move_ball(bc=bc, src=StatePosition(x=1, y=2), dest=StatePosition(x=2, y=4))
@@ -82,7 +66,9 @@ async def example_solution():
 
         await move_ball(bc=bc, src=StatePosition(x=2, y=4), dest=StatePosition(x=0, y=4))
         await move_ball(bc=bc, src=StatePosition(x=3, y=4), dest=StatePosition(x=0, y=3))
+        assert(not bc.is_in_goal_state())
         await move_ball(bc=bc, src=StatePosition(x=1, y=4), dest=StatePosition(x=0, y=2))
+        assert(bc.is_in_goal_state())
 
 
 def main():
