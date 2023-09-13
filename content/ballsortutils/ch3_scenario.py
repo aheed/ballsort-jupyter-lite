@@ -13,7 +13,7 @@ class Ch3Scenario(Scenario):
     """Challenge Implementation"""
 
     def get_goal_state_description(self) -> str:
-        return "Turn Polish flag into Indonesian flag."
+        return "Turn Polish flag 🇵🇱 into Indonesian flag 🇮🇩."
     
     def get_initial_state(self) -> StateModel:
         
