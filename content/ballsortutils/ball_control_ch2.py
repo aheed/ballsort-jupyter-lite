@@ -3,7 +3,6 @@ from ball_control_sim import BallControlSim
 from ch2_state_manager import Ch2StateManager
 from scenario_control import ScenarioControl
 from state_update_model import StatePosition
-from state_utils import get_ball_at
 from update_reporter import UpdateReporter
 
 class BallControlCh2(BallControlSim, ScenarioControl):
@@ -17,7 +16,8 @@ class BallControlCh2(BallControlSim, ScenarioControl):
     async def read_scales(self) -> int:
         """
         Returns negative if left is heavier, positive if right is heavier, 0 if equal.
-        Hard coded coordinates: left=(2,4) right=(3,4)
+        Left scale is the sum of ball weights in columns 2
+        Right scale is the sum of ball weights in columns 3
         """
 
         left_pos = StatePosition(x=2, y=4)
@@ -26,9 +26,6 @@ class BallControlCh2(BallControlSim, ScenarioControl):
         if (self.state.claw.pos == left_pos or self.state.claw.pos == right_pos) and self.state.operating_claw:
             raise IllegalBallControlStateError("Scales can not be used while claw is opening or closing.")
         
-        #todo: check that max one ball is present in the column
-        #      Or sum the weights of all balls in the scales columns
-
         await self._delay(0.3)
 
         # Hard coded weights
@@ -42,11 +39,8 @@ class BallControlCh2(BallControlSim, ScenarioControl):
                     return 1
                 case _:
                     return 0
-
-        left_ball = get_ball_at(state=self.state, pos=left_pos)
-        left_color = left_ball.color if left_ball else ""
-        left_weight = get_weight_by_color(left_color)
-        right_ball = get_ball_at(state=self.state, pos=right_pos)
-        right_color = right_ball.color if right_ball else ""
-        right_weight = get_weight_by_color(right_color)
-        return right_weight - left_weight
+                
+        def get_column_weight(x: int) -> int:
+            return sum([get_weight_by_color(ball.color) for ball in self.state.balls if ball.pos.x == x])
+        
+        return get_column_weight(3) - get_column_weight(2)

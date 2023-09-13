@@ -26,7 +26,7 @@ class Ch1Scenario(Scenario):
 
     def is_in_goal_state(self, state: StateModel) -> bool:
         
-        columns: list[list[StateBall]] = [[] for _ in range(state.max_x)]
+        columns: list[list[StateBall]] = [[] for _ in range(state.max_x+1)]
         for ball in state.balls:
             columns[ball.pos.x].append(ball)
 
