@@ -37,43 +37,25 @@ def test_goal_state():
 
 async def example_solution():
     bc = get_control_sim(0)
-    async with bc:
-        #await set_challenge1_scenario(bc)
-        await bc.set_scenario(Ch1Scenario())
+    await bc.set_scenario(Ch1Scenario())
 
-        # pink marble
-        t2 = asyncio.create_task(bc.move_vertically(2))
-        await t2
-        await bc.close_claw()
-        t1 = asyncio.create_task(bc.move_horizontally(2))
-        t2 = asyncio.create_task(bc.move_vertically(2))
-        await t1
-        await t2
-        await bc.open_claw()
+    # pink marble
+    await bc.move_vertically(2)
+    await bc.close_claw()
+    await asyncio.gather(bc.move_horizontally(2), bc.move_vertically(2))
+    await bc.open_claw()
 
-        # yellow marble
-        t1 = asyncio.create_task(bc.move_horizontally(-2))
-        t2 = asyncio.create_task(bc.move_vertically(-1))
-        await t1
-        await t2
-        await bc.close_claw()
-        t3 = asyncio.create_task(bc.move_vertically(0))
-        t4 = asyncio.create_task(bc.move_horizontally(1))
-        await t3
-        await t4
-        await bc.open_claw()
+    # yellow marble
+    await asyncio.gather(bc.move_horizontally(-2), bc.move_vertically(-1))
+    await bc.close_claw()
+    await asyncio.gather(bc.move_vertically(0), bc.move_horizontally(1))
+    await bc.open_claw()
 
-        # pink marble
-        t1 = asyncio.create_task(bc.move_horizontally(1))
-        t2 = asyncio.create_task(bc.move_vertically(1))
-        await t1
-        await t2
-        await bc.close_claw()
-        t1 = asyncio.create_task(bc.move_horizontally(-2))
-        t2 = asyncio.create_task(bc.move_vertically(-1))
-        await t1
-        await t2
-        await bc.open_claw()
+    # pink marble
+    await asyncio.gather(bc.move_horizontally(1), bc.move_vertically(1))
+    await bc.close_claw()
+    await asyncio.gather(bc.move_horizontally(-2), bc.move_vertically(-1))
+    await bc.open_claw()
 
 
 def main():

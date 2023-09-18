@@ -1,3 +1,7 @@
+from scenario import ScenarioProgress
+from state_update_model import StatePosition
+
+
 class IllegalBallControlStateError(Exception):
     "Raised when a control command is issued while a command for movement along the same axis is still being executed"
     pass
@@ -25,5 +29,13 @@ class BallControl(object):
     async def close_claw(self):
         pass
 
-    def get_position(self) -> tuple[int, int]: # type: ignore
-        pass
+    def get_position(self) -> StatePosition:
+        raise NotImplementedError
+    
+    def get_progress(self) -> ScenarioProgress:
+        """Returns progress toward goal state."""
+        raise NotImplementedError
+
+    def is_in_goal_state(self) -> bool:
+        """Returns true only if state fulfills the goal state criteria."""
+        raise NotImplementedError

@@ -9,9 +9,7 @@ from state_utils import (
 from state_update_model import (
     StateModel,
     MIN_X,
-    MAX_X,
     MIN_Y,
-    MAX_Y,
 )
 
 
@@ -24,16 +22,16 @@ class StateValidator:
             raise IllegalBallControlStateError("Already moving horizontally")
         
         newX = state.claw.pos.x + distance
-        if newX < MIN_X or newX > MAX_X:
-            raise IllegalBallControlStateError(f"X coordinate out of bounds x={newX} minX={MIN_X} maxX={MAX_X}")
+        if newX < MIN_X or newX > state.max_x:
+            raise IllegalBallControlStateError(f"X coordinate out of bounds x={newX} minX={MIN_X} maxX={state.max_x}")
     
     def move_vertically(self, state: StateModel, distance: int) -> None:
         if (state.moving_vertically):
             raise IllegalBallControlStateError("Already moving vertically")
         
         newY = state.claw.pos.y + distance
-        if newY < MIN_Y or newY > MAX_Y:
-            raise IllegalBallControlStateError(f"Y coordinate out of bounds y={newY} minY={MIN_Y} maxY={MAX_Y}")
+        if newY < MIN_Y or newY > state.max_y:
+            raise IllegalBallControlStateError(f"Y coordinate out of bounds y={newY} minY={MIN_Y} maxY={state.max_y}")
 
     def _check_claw_for_ongoing_operations(self, state: StateModel):
         if (state.operating_claw):

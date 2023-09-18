@@ -1,7 +1,6 @@
 from dataclasses import dataclass, replace
 from scenario import Scenario
 from state_update_model import (
-    MAX_X,
     StateBall,
     StateModel,
     StatePosition,
@@ -14,7 +13,7 @@ class Ch0Scenario(Scenario):
     """Challenge Implementation"""
 
     def get_goal_state_description(self) -> str:
-        return "All marbles shall be in the leftmost column"
+        return f"All marbles shall be in the leftmost column.\n{self.get_dimensions_description()}"
     
     def get_initial_state(self) -> StateModel:
         balls = [
@@ -26,7 +25,7 @@ class Ch0Scenario(Scenario):
 
     def is_in_goal_state(self, state: StateModel) -> bool:
         
-        columns: list[list[StateBall]] = [[] for _ in range(MAX_X + 1)]
+        columns: list[list[StateBall]] = [[] for _ in range(state.max_x + 1)]
         for ball in state.balls:
             columns[ball.pos.x].append(ball)
 
@@ -39,5 +38,4 @@ class Ch0Scenario(Scenario):
             return False
 
         return True
-    
     
