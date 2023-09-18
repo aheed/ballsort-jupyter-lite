@@ -8,6 +8,8 @@ class StatePosition:
     x: int
     y: int
 
+    def __str__(self) -> str:
+        return f"x={self.x} y={self.y}"
 
 @dataclass
 class StateBall:
@@ -38,6 +40,7 @@ class StateModel:
 class StateUpdateModel:
     userId: str
     state: StateModel
+    delay_multiplier: float
 
 
 def get_default_state() -> StateModel:

@@ -39,7 +39,7 @@ class StateManager:
         newX = state.claw.pos.x + x
         newY = state.claw.pos.y + y
         state = replace(state, claw=replace(state.claw, pos=StatePosition(x = newX, y = newY)))
-        print(f"new position: {newX}, {newY}")
+        #print(f"new position: {newX}, {newY}")
         return state
 
     def move_horizontally_start(self, state: StateModel, distance: int) -> StateModel:
@@ -64,10 +64,10 @@ class StateManager:
         self.validator.open_claw(state)
         state.operating_claw = True
         state.claw.open = True
-        print(f"opening claw")
+        #print(f"opening claw")
         if not is_ball_in_claw(state):
             return state
-        print(f"dropping {state.claw.ball_color} marble")
+        print(f"dropping {state.claw.ball_color} marble at {state.claw.pos}")
         newBall = StateBall(pos=state.claw.pos, color=state.claw.ball_color)
         state.claw.ball_color = ""
         state.balls.append(newBall)
@@ -77,11 +77,11 @@ class StateManager:
         self.validator.close_claw(state)
         state.operating_claw = True
         state.claw.open = False
-        print(f"closing claw")
+        #print(f"closing claw")
         ball_to_grab = get_ball_at_current_pos(state)
         if not ball_to_grab:
             return state
-        print(f"grabbing {ball_to_grab.color} marble")
+        print(f"grabbing {ball_to_grab.color} marble at {state.claw.pos}")
         state.claw.ball_color = ball_to_grab.color
         #remove ball from list
         state.balls = [ball for ball in state.balls if ball.pos != ball_to_grab.pos]

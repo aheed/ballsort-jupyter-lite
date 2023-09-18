@@ -13,7 +13,7 @@ class Ch1Scenario(Scenario):
     """Challenge Implementation"""
 
     def get_goal_state_description(self) -> str:
-        return "Yellow and pink marbles in separate columns"
+        return f"Yellow and pink marbles in separate columns.\n{self.get_dimensions_description()}"
     
     def get_initial_state(self) -> StateModel:
         balls = [

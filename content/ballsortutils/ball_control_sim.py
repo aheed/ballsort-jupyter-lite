@@ -32,7 +32,8 @@ class BallControlSim(BallControl, ScenarioControl):
 
         state_update: StateUpdateModel = StateUpdateModel(
                 userId="glen",
-                state=state_to_send
+                state=state_to_send,
+                delay_multiplier=self.delay_mult
             )
 
         await self.update_reporter.send_update(state_update)

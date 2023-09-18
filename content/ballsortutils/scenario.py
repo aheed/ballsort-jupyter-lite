@@ -25,3 +25,7 @@ class Scenario(object):
     def get_goal_state_description(self) -> str:
         """Returns a natural language specification of goal state."""
         raise NotImplementedError
+    
+    def get_dimensions_description(self) -> str:
+        init_state = self.get_initial_state()
+        return f"maxX={init_state.max_x}, maxY={init_state.max_y}"
