@@ -1,5 +1,5 @@
 from scenario import ScenarioProgress
-from state_update_model import StatePosition
+from state_update_model import StateModel, StatePosition
 
 
 class IllegalBallControlStateError(Exception):
@@ -38,4 +38,8 @@ class BallControl(object):
 
     def is_in_goal_state(self) -> bool:
         """Returns true only if state fulfills the goal state criteria."""
+        raise NotImplementedError
+    
+    def get_state(self) -> StateModel:
+        """Returns the complete state of the board."""
         raise NotImplementedError

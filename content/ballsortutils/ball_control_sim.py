@@ -106,3 +106,5 @@ class BallControlSim(BallControl, ScenarioControl):
             return False
         return self.state_manager.scenario.is_in_goal_state(self.state)
     
+    def get_state(self) -> StateModel:
+        return self.state

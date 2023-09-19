@@ -19,7 +19,7 @@ class Ch4Scenario(Scenario):
         balls: list[StateBall] = []
         max_x = 2
         max_y = 5
-        balls = [StateBall(pos=StatePosition(x=0, y=y), color="lightgreen", value=y+1) for y in range(max_y)]
+        balls = [StateBall(pos=StatePosition(x=0, y=y), color="lightgreen", value=y+1) for y in range(max_y + 1)]
         
         return replace(get_default_state(), balls = balls, max_x=max_x, max_y=max_y)
 

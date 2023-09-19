@@ -1,9 +1,10 @@
 import asyncio
 from dataclasses import replace
 import sys
-
 sys.path.append("../content/ballsortutils")
 
+from ball_control import IllegalBallControlStateError
+from test_utils import move_ball, move_ball_by_column
 from control_factory import get_ch4_control_sim
 from ch4_scenario import Ch4Scenario
 from state_update_model import StateBall, StatePosition
@@ -31,13 +32,34 @@ async def test_validation():
     bc = get_ch4_control_sim(0)
     await bc.set_scenario(Ch4Scenario())
 
-    #todo: check exception is thrown when dropping high ball on low ball
+    await move_ball(bc=bc, src=StatePosition(x=0, y=0), dest=StatePosition(x=1, y=5))
+
+    exception_caught = False
+    try:
+        # dropping high ball on low ball: illegal move
+        await move_ball(bc=bc, src=StatePosition(x=0, y=1), dest=StatePosition(x=1, y=4))
+    except IllegalBallControlStateError:
+        exception_caught = True
+
+    assert(exception_caught)
+
+
 
 async def example_solution():
     bc = get_ch4_control_sim(0)
     await bc.set_scenario(Ch4Scenario())
 
-    #todo: implement solution
+    async def move_tower(height: int, src_x:int, dest_x:int):
+        if height == 1:
+            await move_ball_by_column(bc=bc, src_x=src_x, dest_x=dest_x)
+            return
+        
+        intermediate_x = 3 - src_x - dest_x
+        await move_tower(height=height - 1, src_x=src_x, dest_x=intermediate_x)
+        await move_ball_by_column(bc=bc, src_x=src_x, dest_x=dest_x)
+        await move_tower(height=height - 1, src_x=intermediate_x, dest_x=dest_x)
+
+    await move_tower(height=bc.get_state().max_y + 1, src_x=0, dest_x=2)
 
 def main():
     test_goal_state()
