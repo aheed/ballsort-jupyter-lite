@@ -38,7 +38,7 @@ class StateValidator:
             raise IllegalBallControlStateError("Claw already opening or closing")
         
         if (state.moving_horizontally or state.moving_vertically):
-            raise IllegalBallControlStateError("Ball dropped while claw is in motion")
+            raise IllegalBallControlStateError("Marble dropped while claw is in motion")
 
     def open_claw(self, state: StateModel):
         #print("state: ", state)

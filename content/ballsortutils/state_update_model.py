@@ -15,14 +15,16 @@ class StatePosition:
 class StateBall:
     pos: StatePosition
     color: str
-
+    value: int = 0
+    label: str = ""
 
 @dataclass
 class Claw:
     pos: StatePosition
     open: bool
     ball_color: str
-
+    ball_value: int
+    ball_label: str
 
 @dataclass
 class StateModel:
@@ -48,7 +50,7 @@ def get_default_state() -> StateModel:
         max_x=3,
         max_y=4,
         balls=[StateBall(pos=StatePosition(x=2, y=4), color="blue")],
-        claw=Claw(pos=StatePosition(x=0, y=0), open=True, ball_color=""),
+        claw=Claw(pos=StatePosition(x=0, y=0), open=True, ball_color="", ball_value=0, ball_label=""),
         isInGoalState=False,
         moving_horizontally=False,
         moving_vertically=False,

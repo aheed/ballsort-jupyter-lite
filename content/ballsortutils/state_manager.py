@@ -68,8 +68,10 @@ class StateManager:
         if not is_ball_in_claw(state):
             return state
         print(f"dropping {state.claw.ball_color} marble at {state.claw.pos}")
-        newBall = StateBall(pos=state.claw.pos, color=state.claw.ball_color)
+        newBall = StateBall(pos=state.claw.pos, color=state.claw.ball_color, value=state.claw.ball_value, label=state.claw.ball_label)
         state.claw.ball_color = ""
+        state.claw.ball_value = 0 #not strictly necessary
+        state.claw.ball_label = "" #not strictly necessary
         state.balls.append(newBall)
         return self._check_goal_state(state)
 
@@ -83,6 +85,8 @@ class StateManager:
             return state
         print(f"grabbing {ball_to_grab.color} marble at {state.claw.pos}")
         state.claw.ball_color = ball_to_grab.color
+        state.claw.ball_value = ball_to_grab.value
+        state.claw.ball_label = ball_to_grab.label
         #remove ball from list
         state.balls = [ball for ball in state.balls if ball.pos != ball_to_grab.pos]
         return self._check_goal_state(state)
