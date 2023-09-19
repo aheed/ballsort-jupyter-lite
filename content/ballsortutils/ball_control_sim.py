@@ -27,8 +27,9 @@ class BallControlSim(BallControl, ScenarioControl):
     async def __aexit__(self, *_):
         await self.update_reporter.shutdown()
 
-    async def __send_update(self, include_balls: bool = False):
-        state_to_send = self.state if (include_balls) else replace(self.state, balls = None)
+    async def __send_update(self, include_balls: bool = False, include_dimensions: bool = False):
+        state_to_send = self.state if include_balls else replace(self.state, balls = None)
+        state_to_send = state_to_send if include_dimensions else replace(state_to_send, max_x = 0, max_y = 0)
 
         state_update: StateUpdateModel = StateUpdateModel(
                 userId="glen",
@@ -93,7 +94,7 @@ class BallControlSim(BallControl, ScenarioControl):
 
     async def set_scenario(self, scenario: Scenario):
         self.state = self.state_manager.set_scenario(state=self.state, scenario=scenario)
-        await self.__send_update(include_balls = True)
+        await self.__send_update(include_balls = True, include_dimensions = True)
 
     def get_progress(self) -> ScenarioProgress:
         if not self.state_manager.scenario:
