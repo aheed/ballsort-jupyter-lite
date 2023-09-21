@@ -67,7 +67,7 @@ class StateManager:
         #print(f"opening claw")
         if not is_ball_in_claw(state):
             return state
-        print(f"dropping {state.claw.ball_color} marble at {state.claw.pos}")
+        print(f"dropping at {state.claw.pos}")
         newBall = StateBall(pos=state.claw.pos, color=state.claw.ball_color, value=state.claw.ball_value, label=state.claw.ball_label)
         state.claw.ball_color = ""
         state.claw.ball_value = 0 #not strictly necessary
@@ -83,7 +83,7 @@ class StateManager:
         ball_to_grab = get_ball_at_current_pos(state)
         if not ball_to_grab:
             return state
-        print(f"grabbing {ball_to_grab.color} marble at {state.claw.pos}")
+        print(f"grabbing {ball_to_grab} at {state.claw.pos}")
         state.claw.ball_color = ball_to_grab.color
         state.claw.ball_value = ball_to_grab.value
         state.claw.ball_label = ball_to_grab.label

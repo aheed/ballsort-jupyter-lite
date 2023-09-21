@@ -18,6 +18,9 @@ class StateBall:
     value: int = 0
     label: str = ""
 
+    def __str__(self) -> str:
+        return f"{self.color} {self.label}"
+
 @dataclass
 class Claw:
     pos: StatePosition
