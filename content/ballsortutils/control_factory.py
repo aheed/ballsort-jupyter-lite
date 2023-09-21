@@ -23,3 +23,6 @@ def get_ch2_control_sim(delay_multiplier: float = 1.0) -> BallControlCh2:
 def get_ch4_control_sim(delay_multiplier: float = 1.0) -> BallControlCh4:
     reporter = PostMessageUpdateReporter()
     return BallControlCh4(update_reporter=reporter, delay_multiplier=delay_multiplier)
+
+def get_ch5_control_sim(delay_multiplier: float = 1.0) -> BallControlCh4:
+    return get_ch4_control_sim(delay_multiplier=delay_multiplier)

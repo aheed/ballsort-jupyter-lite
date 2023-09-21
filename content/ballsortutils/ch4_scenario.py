@@ -13,10 +13,9 @@ class Ch4Scenario(Scenario):
     """Challenge Implementation"""
 
     def get_goal_state_description(self) -> str:
-        return f"Hanoi Tower\nMove all marbles from the leftmost column to the rightmost column. A marble can not be placed on top of a marble of lower value.\n{self.get_dimensions_description()}"
+        return f"Tower of Hanoi\nMove all marbles from the leftmost column to the rightmost column. A marble can not be placed on top of a marble of lower value.\n{self.get_dimensions_description()}"
     
     def get_initial_state(self) -> StateModel:
-        balls: list[StateBall] = []
         max_x = 2
         max_y = 5
         balls = [StateBall(pos=StatePosition(x=0, y=y), color="lightgreen", value=y+1, label=f"{y+1}") for y in range(max_y + 1)]
