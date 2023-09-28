@@ -2,6 +2,7 @@ from dataclasses import dataclass, replace
 from scenario import Scenario
 from state_update_model import (
     MIN_X,
+    Highlight,
     StateBall,
     StateModel,
     StatePosition,
@@ -19,10 +20,11 @@ class Ch2Scenario(Scenario):
     def get_initial_state(self) -> StateModel:
         balls = [
             StateBall(pos=StatePosition(x=1, y=2), color="yellow"),
-            StateBall(pos=StatePosition(x=1, y=3), color="green"),
-            StateBall(pos=StatePosition(x=1, y=4), color="blue"),
+            StateBall(pos=StatePosition(x=1, y=3), color="blue"),
+            StateBall(pos=StatePosition(x=1, y=4), color="green"),
         ]
-        return replace(get_default_state(), balls = balls)
+        highlights = [Highlight(xMin=2, xMax=3, yMin=0, yMax=4, color="lightblue")]
+        return replace(get_default_state(), balls = balls, highlights=highlights, max_x=3, max_y=4)
 
     def is_in_goal_state(self, state: StateModel) -> bool:
 
