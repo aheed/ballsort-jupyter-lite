@@ -46,36 +46,54 @@ async def example_solution_no_scales():
         # blue marble
         await move_ball(bc=bc, src=StatePosition(x=1, y=4), dest=StatePosition(x=0, y=2))
 
+def scale_output_positions(scale_output: int) -> tuple[int, int]:
+    if scale_output < 0:
+        return 2,3
+    return 3,2
+
 async def example_solution():
     bc = get_ch2_control_sim(delay_multiplier=0.0)
-    async with bc:
-        sc = Ch2Scenario()
-        await bc.set_scenario(sc)
+    sc = Ch2Scenario()
+    await bc.set_scenario(sc)
 
-        # yellow marble to left scale
-        await move_ball(bc=bc, src=StatePosition(x=1, y=2), dest=StatePosition(x=2, y=4))
+    # populate scale
+    await move_ball(bc=bc, src=StatePosition(x=1, y=2), dest=StatePosition(x=2, y=4))
+    await move_ball(bc=bc, src=StatePosition(x=1, y=3), dest=StatePosition(x=3, y=4))
+    x1_heavy, x1_light = scale_output_positions(await bc.read_scales())
 
-        # green marble to right scale
-        await move_ball(bc=bc, src=StatePosition(x=1, y=3), dest=StatePosition(x=3, y=4))
+    # move heaviest to leftmost column bottom
+    await move_ball(bc=bc, src=StatePosition(x=x1_heavy, y=4), dest=StatePosition(x=0, y=4))
 
-        yellow_heavier_than_green = await bc.read_scales()
-        print(f"yellow vs green weight:  {yellow_heavier_than_green}")
+    # move the last one to vacant scale column
+    await move_ball(bc=bc, src=StatePosition(x=1, y=4), dest=StatePosition(x=x1_heavy, y=4))
 
-        # todo: processing and shifting to sort marbles
-        #       Skip to goal state for now, knowing the hard coded weights
+    x2_heavy, x2_light = scale_output_positions(await bc.read_scales())
+    
+    if x2_heavy == x1_light:
+        await move_ball(bc=bc, src=StatePosition(x=x2_heavy, y=4), dest=StatePosition(x=0, y=3))
+        await move_ball(bc=bc, src=StatePosition(x=x2_light, y=4), dest=StatePosition(x=0, y=2))
+        return
 
-        await move_ball(bc=bc, src=StatePosition(x=2, y=4), dest=StatePosition(x=0, y=4))
-        await move_ball(bc=bc, src=StatePosition(x=3, y=4), dest=StatePosition(x=0, y=3))
-        assert(not bc.is_in_goal_state())
-        await move_ball(bc=bc, src=StatePosition(x=1, y=4), dest=StatePosition(x=0, y=2))
-        assert(bc.is_in_goal_state())
+    assert(x1_heavy == x2_heavy)
+    assert(x1_light == x2_light)
 
+    # temporarily move the light one to column 1
+    await move_ball(bc=bc, src=StatePosition(x=x2_light, y=4), dest=StatePosition(x=1, y=4))
 
+    # col0 -> vacant scale position
+    await move_ball(bc=bc, src=StatePosition(x=0, y=4), dest=StatePosition(x=x2_light, y=4))
+
+    x3_heavy, x3_light = scale_output_positions(await bc.read_scales())
+    await move_ball(bc=bc, src=StatePosition(x=x3_heavy, y=4), dest=StatePosition(x=0, y=4))
+    await move_ball(bc=bc, src=StatePosition(x=x3_light, y=4), dest=StatePosition(x=0, y=3))
+    assert(not bc.is_in_goal_state())
+    await move_ball(bc=bc, src=StatePosition(x=1, y=4), dest=StatePosition(x=0, y=2))
+    assert(bc.is_in_goal_state())
+    
 def main():
     test_goal_state()
     asyncio.run(example_solution_no_scales())
     asyncio.run(example_solution())
-
 
 if __name__ == "__main__":
     import time

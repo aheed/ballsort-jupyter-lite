@@ -30,6 +30,19 @@ class Claw:
     ball_label: str
 
 @dataclass
+class Spotlight:
+    on: bool
+    pos: StatePosition
+
+@dataclass
+class Highlight:
+    xMin: int
+    xMax: int
+    yMin: int
+    yMax: int
+    color: str
+
+@dataclass
 class StateModel:
     max_x: int
     max_y: int
@@ -39,7 +52,8 @@ class StateModel:
     moving_horizontally: bool
     moving_vertically: bool
     operating_claw: bool
-
+    spotlight: Spotlight | None
+    highlights: list[Highlight] | None
 
 @dataclass
 class StateUpdateModel:
@@ -57,5 +71,7 @@ def get_default_state() -> StateModel:
         isInGoalState=False,
         moving_horizontally=False,
         moving_vertically=False,
-        operating_claw=False
+        operating_claw=False,
+        spotlight=None,
+        highlights=None
     )
